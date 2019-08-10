@@ -1,11 +1,13 @@
 {
   "name": "js-package-template",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "main": "dist/js-package-template.umd.js",
   "module": "dist/js-package-template.esm.js",
   "description": "",
   "author": "Luke Carl Thompson <hello@lukethompson.com.au> (https://lukethompson.com.au)",
   "license": "MIT",
+  "repository": "https://github.com/LukeCarlThompson/js-library-template.git",
+  "private": true,
   "scripts": {
     "dev": "gulp dev",
     "build": "gulp build"

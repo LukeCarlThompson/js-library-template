@@ -50,97 +50,112 @@ function style() {
 
 // JS processing
 function scripts() {
-  return (
-    gulp
-      .src(config.src + "js/index.js", {
-        allowEmpty: true,
-      })
-      .pipe(sourceMaps.init())
-      .pipe(rollup(
+  return gulp
+    .src(config.src + "js/index.js", {
+      allowEmpty: true,
+    })
+    .pipe(sourceMaps.init())
+    .pipe(
+      rollup(
+        {
+          plugins: [
+            buble({
+              transforms: {
+                modules: false,
+              },
+              targets: {
+                firefox: 32,
+                chrome: 24,
+                safari: 6,
+                opera: 15,
+                edge: 10,
+                ie: 10,
+              },
+            }),
+          ],
+        },
+        [
           {
-            plugins: [
-              buble({
-                transforms: {
-                  modules: false,
-                },
-                targets: {
-                  firefox: 32,
-                  chrome: 24,
-                  safari: 6,
-                  opera: 15,
-                  edge: 10,
-                  ie: 10,
-                },
-              }),
-            ],
+            format: "iife",
+            file: "scripts.js",
+            name: config.name,
           },
-          [
-            {
-              format: "iife",
-              file: 'scripts.js',
-            },
-          ]
-        )
+        ]
       )
-      .pipe(sourceMaps.write())
-      .pipe(gulp.dest(config.dev + "js/"))
-  );
+    )
+    .pipe(sourceMaps.write())
+    .pipe(gulp.dest(config.dev + "js/"));
 }
 
 // JS packages output
 function packageScripts() {
-  return (
-    gulp
-      .src(config.src + "js/index.js", {
-        allowEmpty: true,
-      })
-      .pipe(rollup(
+  return gulp
+    .src(config.src + "js/index.js", {
+      allowEmpty: true,
+    })
+    .pipe(
+      rollup(
+        {
+          plugins: [
+            buble({
+              transforms: {
+                modules: false,
+              },
+              targets: {
+                firefox: 32,
+                chrome: 24,
+                safari: 6,
+                opera: 15,
+                edge: 10,
+                ie: 10,
+              },
+            }),
+          ],
+        },
+        [
           {
-            plugins: [
-              buble({
-                transforms: {
-                  modules: false,
-                },
-                targets: {
-                  firefox: 32,
-                  chrome: 24,
-                  safari: 6,
-                  opera: 15,
-                  edge: 10,
-                  ie: 10,
-                },
-              }),
-            ],
+            format: "cjs",
+            file: config.name + ".js",
+            name: config.name,
           },
-          [
-            {
-              format: "cjs",
-              file: config.name + '.js',
-            },
-            {
-              format: "es",
-              file: config.name + '.es.js',
-            },
-            {
-              format: "umd",
-              file: config.name + '.umd.js',
-              name: config.name,
-            },
-            {
-              format: "iife",
-              file: config.name + '.iife.js',
-            },
-          ]
-        )
+          {
+            format: "es",
+            file: config.name + ".esm.js",
+            name: config.name,
+          },
+          {
+            format: "umd",
+            file: config.name + ".umd.js",
+            name: config.name,
+          },
+          {
+            format: "iife",
+            file: config.name + ".iife.js",
+            name: config.name,
+          },
+        ]
       )
-      .pipe(uglify())
-      .pipe(gulp.dest(config.dist))
-  );
+    )
+    .pipe(uglify())
+    .pipe(gulp.dest(config.dist));
 }
 
-function cleanDir() {
+// Empty the dev folder
+function cleanDev() {
   return gulp
-    .src([config.dev + '/**/*', config.dist + '/**/*'], {read: false, allowEmpty: true})
+    .src(config.dev + "/**/*", {
+      read: false,
+      allowEmpty: true,
+    })
+    .pipe(clean());
+}
+// empty the dist folder
+function cleanDist() {
+  return gulp
+    .src(config.dist + "/**/*", {
+      read: false,
+      allowEmpty: true,
+    })
     .pipe(clean());
 }
 
@@ -152,12 +167,7 @@ function server() {
     },
   });
 
-  // Update active directory on any file changes
-  gulp.watch(config.src + "**/*.*").on("change", function(path) {
-    logChange(path);
-  });
-
-  // Watch scss, html, php and js files for changes. Process the files then update the browserSync server
+  // Watch scss, html and js files for changes. Process the files then update the browserSync server
   gulp.watch(config.src + "scss/**/*.scss", style);
   gulp
     .watch(config.src + "**/*.html")
@@ -168,15 +178,5 @@ function server() {
 }
 
 // Gulp tasks exported
-exports.dev = gulp.series(cleanDir, copyHtml, style, scripts, server);
-exports.build = gulp.series(cleanDir, packageScripts);
-
-// Find an alternative to group the css media queries that supports sourcemaps
-
-// Create a clean task that empties the dist directories
-
-// Test out folder structure for template files
-
-// TO DO Add in webpack to bundle the javascript
-
-// Add in image minification???
+exports.dev = gulp.series(cleanDev, copyHtml, style, scripts, server);
+exports.build = gulp.series(cleanDist, packageScripts);

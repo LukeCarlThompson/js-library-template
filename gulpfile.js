@@ -12,12 +12,16 @@ const autoprefixer = require("gulp-autoprefixer");
 const cssNano = require("gulp-cssNano");
 
 const rollup = require("gulp-better-rollup");
+const resolve = require('rollup-plugin-node-resolve');
 const buble = require("rollup-plugin-buble");
-const uglify = require("gulp-uglify");
+const uglify = require("gulp-uglify-es").default;
 
 // Project config
 const config = {
-  src: "./_src/",
+  src: {
+    folder: "./_src/",
+    lib: "./_src/js/lib/lib.js",
+  },
   dev: "./dev/",
   dist: "./dist/",
   name: require("./package").name,
@@ -28,17 +32,18 @@ function logChange(path) {
   console.log("File changed --> \x1b[32m\u001b[1m " + path + "\x1b[0m");
 }
 
-// Copy files
+// HTML processing
 function copyHtml() {
   return gulp
-    .src(config.src + "**/*.html")
+    .src(config.src.folder + "**/*.html")
     .pipe(copy(config.dev, { prefix: 1 }));
 }
+
 
 // SCSS processing
 function style() {
   return gulp
-    .src(config.src + "scss/style.scss")
+    .src(config.src.folder + "scss/style.scss")
     .pipe(sourceMaps.init())
     .pipe(sass().on("error", sass.logError))
     .pipe(autoprefixer())
@@ -48,20 +53,26 @@ function style() {
     .pipe(browserSync.stream());
 }
 
+
 // JS processing
-function scripts() {
+function copyScripts() {
   return gulp
-    .src(config.src + "js/index.js", {
-      allowEmpty: true,
-    })
+    .src(config.src.folder + "js/index.js", { allowEmpty: true } )
+    .pipe(gulp.dest(config.dev + "js/"));
+};
+
+function processDevScripts() {
+  return gulp
+    .src(config.dev + "js/index.js", { allowEmpty: true } )
     .pipe(sourceMaps.init())
     .pipe(
       rollup(
         {
           plugins: [
+            resolve(),
             buble({
               transforms: {
-                modules: false,
+                modules: true,
               },
               targets: {
                 firefox: 32,
@@ -87,16 +98,18 @@ function scripts() {
     .pipe(gulp.dest(config.dev + "js/"));
 }
 
+
 // JS packages output
 function packageScripts() {
   return gulp
-    .src(config.src + "js/index.js", {
+    .src(config.src.lib, {
       allowEmpty: true,
     })
     .pipe(
       rollup(
         {
           plugins: [
+            resolve(),
             buble({
               transforms: {
                 modules: false,
@@ -114,11 +127,6 @@ function packageScripts() {
         },
         [
           {
-            format: "cjs",
-            file: config.name + ".js",
-            name: config.name,
-          },
-          {
             format: "es",
             file: config.name + ".esm.js",
             name: config.name,
@@ -130,7 +138,7 @@ function packageScripts() {
           },
           {
             format: "iife",
-            file: config.name + ".iife.js",
+            file: config.name + ".js",
             name: config.name,
           },
         ]
@@ -140,10 +148,11 @@ function packageScripts() {
     .pipe(gulp.dest(config.dist));
 }
 
+
 // Empty the dev folder
 function cleanDev() {
   return gulp
-    .src(config.dev + "/**/*", {
+    .src(config.dev, {
       read: false,
       allowEmpty: true,
     })
@@ -152,12 +161,13 @@ function cleanDev() {
 // empty the dist folder
 function cleanDist() {
   return gulp
-    .src(config.dist + "/**/*", {
+    .src(config.dist, {
       read: false,
       allowEmpty: true,
     })
     .pipe(clean());
 }
+
 
 // BrowserSync and watch tasks
 function server() {
@@ -168,15 +178,17 @@ function server() {
   });
 
   // Watch scss, html and js files for changes. Process the files then update the browserSync server
-  gulp.watch(config.src + "scss/**/*.scss", style);
+  gulp.watch(config.src.folder + "scss/**/*.scss", style);
   gulp
-    .watch(config.src + "**/*.html")
+    .watch(config.src.folder + "**/*.html")
     .on("change", gulp.series(copyHtml, browserSync.reload));
   gulp
-    .watch(config.src + "**/*.js")
-    .on("change", gulp.series(scripts, browserSync.reload));
+    .watch(config.src.folder + "**/*.js")
+    .on("change", gulp.series(packageScripts, copyScripts, processDevScripts , browserSync.reload));
 }
 
+
 // Gulp tasks exported
-exports.dev = gulp.series(cleanDev, copyHtml, style, scripts, server);
+exports.dev = gulp.series(packageScripts, copyHtml, style, copyScripts, processDevScripts, server);
 exports.build = gulp.series(cleanDist, packageScripts);
+exports.clean = gulp.series(cleanDist, cleanDev);

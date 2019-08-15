@@ -1,0 +1,1 @@
+var test=function(){return console.log("testing the lib.js file")};export default test;

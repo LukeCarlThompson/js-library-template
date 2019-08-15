@@ -1,0 +1,13 @@
+(function () {
+	'use strict';
+
+	var test=function(){return console.log("testing the lib.js file")};
+
+	test();
+
+
+	console.log('Index.js file 😎');
+
+}());
+
+//# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic2NyaXB0cy5qcyIsInNvdXJjZXMiOlsiZGlzdC9saWJ0ZW1wbGF0ZS5lc20uanMiLCJkb2NzL2pzL2luZGV4LmpzIl0sInNvdXJjZXNDb250ZW50IjpbInZhciB0ZXN0PWZ1bmN0aW9uKCl7cmV0dXJuIGNvbnNvbGUubG9nKFwidGVzdGluZyB0aGUgbGliLmpzIGZpbGVcIil9O2V4cG9ydCBkZWZhdWx0IHRlc3Q7IiwiaW1wb3J0IHRlc3QgZnJvbSAnLi4vLi4vZGlzdC9saWJ0ZW1wbGF0ZS5lc20uanMnO1xuXG50ZXN0KCk7XG5cblxuY29uc29sZS5sb2coJ0luZGV4LmpzIGZpbGUg8J+YjicpOyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Q0FBQSxJQUFJLElBQUksQ0FBQyxVQUFVLENBQUMsT0FBTyxPQUFPLENBQUMsR0FBRyxDQUFDLHlCQUF5QixDQUFDLENBQUMsQ0FBQzs7Q0NFbkUsSUFBSSxFQUFFLENBQUM7OztDQUdQLE9BQU8sQ0FBQyxHQUFHLENBQUMsa0JBQWtCLENBQUM7Ozs7In0=

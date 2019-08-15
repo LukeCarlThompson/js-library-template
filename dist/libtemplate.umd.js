@@ -1,0 +1,1 @@
+!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define("libtemplate",t):(e=e||self).libtemplate=t()}(this,function(){"use strict";return function(){return console.log("testing the lib.js file")}});

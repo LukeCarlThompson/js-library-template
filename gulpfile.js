@@ -22,7 +22,7 @@ const config = {
     folder: "./_src/",
     lib: "./_src/js/lib/lib.js",
   },
-  dev: "./dev/",
+  dev: "./docs/",
   dist: "./dist/",
   name: require("./package").name,
 };

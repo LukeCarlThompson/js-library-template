@@ -70,19 +70,7 @@ function processDevScripts() {
         {
           plugins: [
             resolve(),
-            buble({
-              transforms: {
-                modules: true,
-              },
-              targets: {
-                firefox: 32,
-                chrome: 24,
-                safari: 6,
-                opera: 15,
-                edge: 10,
-                ie: 10,
-              },
-            }),
+            buble(),
           ],
         },
         [
@@ -110,19 +98,7 @@ function packageScripts() {
         {
           plugins: [
             resolve(),
-            buble({
-              transforms: {
-                modules: false,
-              },
-              targets: {
-                firefox: 32,
-                chrome: 24,
-                safari: 6,
-                opera: 15,
-                edge: 10,
-                ie: 10,
-              },
-            }),
+            buble(),
           ],
         },
         [
